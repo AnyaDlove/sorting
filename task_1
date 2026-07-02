@@ -1,0 +1,72 @@
+import random
+import timeit
+import matplotlib.pyplot as plt
+
+def bubble_sort(arr):
+    n = len(arr)
+    a = arr.copy()
+    for i in range(n):
+        swapped = False
+        for j in range(0, n - i - 1):
+            if a[j] > a[j + 1]:
+                a[j], a[j + 1] = a[j + 1], a[j]
+                swapped = True
+        if not swapped:
+            break
+    return 
+def selection_sort(arr):
+    a = arr.copy()
+    n = len(a)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if a[j] < a[min_idx]:
+                min_idx = j
+        a[i], a[min_idx] = a[min_idx], a[i]
+    return a
+
+def insertion_sort(arr):
+    a = arr.copy()
+    for i in range(1, len(a)):
+        key = a[i]
+        j = i - 1
+        while j >= 0 and a[j] > key:
+            a[j + 1] = a[j]
+            j -= 1
+        a[j + 1] = key
+    return a
+
+test_arr = [5, 2, 9, 1, 5, 6]
+print("Исходный список:", test_arr)
+print("Пузырьком:", bubble_sort(test_arr))
+print("Выбором:", selection_sort(test_arr))
+print("Вставками:", insertion_sort(test_arr))
+print()
+sizes = [10, 100, 200, 500, 1000]  
+bubble_times = []
+selection_times = []
+insertion_times = []
+
+for size in sizes:
+    data = [random.randint(0, size * 10) for _ in range(size)]
+    b_time = timeit.timeit(lambda: bubble_sort(data), number=100)
+    s_time = timeit.timeit(lambda: selection_sort(data), number=100)
+    i_time = timeit.timeit(lambda: insertion_sort(data), number=100)
+    
+    bubble_times.append(b_time)
+    selection_times.append(s_time)
+    insertion_times.append(i_time)
+    
+    print(f"Размер {size}: пузырёк {b_time:.5f} с, выбор {s_time:.5f} с, вставки {i_time:.5f} с")
+
+plt.figure(figsize=(10, 6))
+plt.plot(sizes, bubble_times, marker='o', label='Пузырьковая')
+plt.plot(sizes, selection_times, marker='s', label='Сортировка выбором')
+plt.plot(sizes, insertion_times, marker='^', label='Сортировка вставками')
+plt.xlabel('Размер списка')
+plt.ylabel('Время (сек)')
+plt.title('Сравнение времени сортировок (100 запусков)')
+plt.legend()
+plt.grid(True)
+plt.savefig('sorting_compare.png')
+plt.show()
